@@ -1,3 +1,7 @@
+sudo: required
+services:
+  - docker
+
 language: rust
 rust:
   - stable
@@ -6,3 +10,19 @@ rust:
 matrix:
   allow_failures:
     - rust: nightly
+
+
+
+before_install:
+  - docker build -t blog .
+  - docker run -d -p 8080:8000/tcp blog
+  - docker ps -a
+  - curl localhost:8080
+
+
+
+after_success:
+  - if [ "$TRAVIS_BRANCH" == "master" ]; then
+    docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
+    docker push "$DOCKER_USERNAME"/blog;
+    fi
