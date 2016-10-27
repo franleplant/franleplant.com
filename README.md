@@ -21,3 +21,9 @@ sudo docker run -d -p 8080:8000/tcp blog
 - `-p 8080:8000` maps host address `localhost:8080` to container address `{ip}:8000`
 
 Note that the app is running in 8000 inside
+
+## TODO
+- Use HTTPS
+- Redirect naked domain
+- Blog and more sections
+- Use a nice helvetica-like font
