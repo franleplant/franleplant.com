@@ -17,5 +17,5 @@ after_success:
 - if [ "$TRAVIS_BRANCH" == "master" ]; then
   docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
   docker push "$DOCKER_BUILD_NAME";
-  ssh -i franleplant.com.pem "$AWS_USER"@"$AWS_HOST" -t "sudo docker stop $(sudo docker ps -q --filter ancestor=franleplant/blog ); sudo docker run -d -p 80:8000 $DOCKER_BUILD_NAME";
+  ssh -i franleplant.com.pem "$AWS_USER"@"$AWS_HOST" -t "sudo docker stop $(sudo docker ps -q --filter ancestor=$DOCKER_BUILD_NAME ); sudo docker run -d -p 80:8000 $DOCKER_BUILD_NAME";
   fi
