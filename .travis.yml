@@ -10,6 +10,7 @@ matrix:
 before_install:
 - openssl aes-256-cbc -K $encrypted_4917fba71c1e_key -iv $encrypted_4917fba71c1e_iv
   -in franleplant.com.pem.enc -out franleplant.com.pem -d
+- sudo chmod 400 franleplant.com.pem
 - docker build -t "$DOCKER_BUILD_NAME" .
 - docker run -d -p 8080:8000/tcp "$DOCKER_BUILD_NAME"
 - docker ps -a
