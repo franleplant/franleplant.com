@@ -3,6 +3,7 @@ extern crate chrono;
 
 
 use std::env;
+use std::time::Duration;
 use std::collections::HashMap;
 use nickel::{Nickel, Mountable, HttpRouter, StaticFilesHandler};
 
@@ -32,5 +33,6 @@ fn main() {
     });
 
 
+    server.keep_alive_timeout(Some(Duration::from_secs(30)));
     server.listen("0.0.0.0:8000").unwrap();
 }
