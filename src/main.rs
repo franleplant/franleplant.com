@@ -1,8 +1,12 @@
 #[macro_use] extern crate nickel;
+extern crate chrono;
+
 
 use std::env;
 use std::collections::HashMap;
 use nickel::{Nickel, Mountable, HttpRouter, StaticFilesHandler};
+
+use chrono::{DateTime, UTC};
 
 fn main() {
     let mut server = Nickel::new();
@@ -11,7 +15,12 @@ fn main() {
     println!("{:?}", env::var("ENV"));
 
     server.utilize(middleware! { |request|
-        println!("LOG: {:?}", request.origin.uri);
+        let time: DateTime<UTC> = UTC::now();
+        let ref method = request.origin.method;
+        let ref uri = request.origin.uri;
+        let ref headers = request.origin.headers;
+        let ref remote_addr = request.origin.remote_addr;
+        println!("{} LOG: {} {} \n{}from: {} \n", time, method, uri, headers, remote_addr);
     });
 
     server.mount("/public/", StaticFilesHandler::new("public/"));
