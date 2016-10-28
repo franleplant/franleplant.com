@@ -11,9 +11,19 @@
 }
 
 .main-content {
-  margin: 100px auto;
-  width: 600px;
+  margin-right: auto;
+  margin-left: auto;
+  padding-right: 10px;
+  padding-left: 10px;
 }
+
+@media only screen and (min-device-width: 700px) {
+  .main-content {
+    max-width: 600px;
+  }
+
+}
+
 
 
 .links {
