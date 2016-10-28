@@ -33,6 +33,6 @@ fn main() {
     });
 
 
-    server.keep_alive_timeout(Some(Duration::from_secs(None)));
+    server.keep_alive_timeout(None);
     server.listen("0.0.0.0:8000").unwrap();
 }
