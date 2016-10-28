@@ -23,6 +23,7 @@ sudo docker run -d -p 8080:8000/tcp blog
 Note that the app is running in 8000 inside
 
 ## TODO
+- Use nginx to try to improve performance
 - Use HTTPS
 - Redirect naked domain
 - Blog and more sections
