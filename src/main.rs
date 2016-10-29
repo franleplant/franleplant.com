@@ -5,12 +5,13 @@ extern crate chrono;
 use std::env;
 use std::time::Duration;
 use std::collections::HashMap;
-use nickel::{Nickel, Mountable, HttpRouter, StaticFilesHandler};
+use nickel::{Nickel, Options, Mountable, HttpRouter, StaticFilesHandler};
 
 use chrono::{DateTime, UTC};
 
 fn main() {
     let mut server = Nickel::new();
+    server.options = Options::default().thread_count(Some(30));
 
     // TODO
     println!("{:?}", env::var("ENV"));
