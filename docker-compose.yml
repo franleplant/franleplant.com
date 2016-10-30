@@ -1,0 +1,22 @@
+version: '2'
+services:
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile-nginx
+    container_name: nginx
+    ports:
+      - "8080:80"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+
+  web:
+    container_name: app
+    image: franleplant/blog
+    ports:
+      - "8000:8000"
+    environment:
+      - VIRTUAL_HOST=whoami.local
+    #volumes:
+      #- .:/code
+
