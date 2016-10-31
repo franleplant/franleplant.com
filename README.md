@@ -2,29 +2,20 @@
 My Personal page (in construction)
 
 
-## Docker instructions 
+## Deploy docker containers to server
 
-> This is mostly for deployment purposes
-
-You need to have `docker-engine` installed
+Requirements: docker, docker-machine, docker-compose
 
 ```sh
+# Set env variables to point to aws host
+eval $(docker-machine env aws-sandbox)
 
-// Build image
-sudo docker build -t blog .
+# build and deploy
+docker-compose up --build -d
 
-// Run it
-sudo docker run -d -p 8080:8000/tcp blog
 ```
 
-- `-d` : is detached
-- `-p 8080:8000` maps host address `localhost:8080` to container address `{ip}:8000`
-
-Note that the app is running in 8000 inside
-
 ## TODO
-- Use nginx to try to improve performance
 - Use HTTPS
-- Redirect naked domain
 - Blog and more sections
 - Use a nice helvetica-like font
