@@ -30,7 +30,7 @@ fn main() {
     server.get("/", middleware! { |_, response|
         let mut data = HashMap::new();
         data.insert("name", "user");
-        return response.render("src/view/index.tpl", &data);
+        return response.render("view/index.tpl", &data);
     });
 
 
