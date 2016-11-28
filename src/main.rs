@@ -5,10 +5,12 @@ extern crate acme_client;
 
 
 use std::thread;
+use std::error::Error;
 use std::env;
 use std::time::Duration;
 use std::collections::HashMap;
-use nickel::{Nickel, Options, Mountable, HttpRouter, StaticFilesHandler, Request, Response, MiddlewareResult};
+use nickel::{Nickel, Options, Mountable, HttpRouter, StaticFilesHandler, Request, Response, MiddlewareResult, ListeningServer};
+use nickel::extensions::Redirect;
 use hyper::net::Openssl;
 use chrono::{DateTime, UTC};
 use acme_client::AcmeClient;
@@ -19,6 +21,8 @@ struct Config {
     http_port: String,
     https_port: String,
     https: bool,
+    thread_count: usize,
+    thread_keepalive: u64,
 }
 
 fn get_config() -> Config {
@@ -42,11 +46,23 @@ fn get_config() -> Config {
         Err(_) => false,
     };
 
+    let thread_count: usize = match env::var("THREADS") {
+        Ok(threads) => threads.parse().expect("THREADS should be a number"),
+        Err(_) => 30,
+    };
+
+    let thread_keepalive: u64 = match env::var("THREAD_KEEPALIVE") {
+        Ok(keepalive) => keepalive.parse().expect("THREAD_KEEPALIVE should be a number"),
+        Err(_) => 1,
+    };
+
     Config {
         ip: ip,
         http_port: http_port,
         https_port: https_port,
         https: https,
+        thread_count: thread_count,
+        thread_keepalive: thread_keepalive,
     }
 }
 
@@ -76,69 +92,58 @@ fn logger_fn<'mw>(request: &mut Request, respose: Response<'mw>) -> MiddlewareRe
 }
 
 
-fn start_http_server() {
-    let config = get_config();
+
+
+fn start_server(config: &Config, https_server: bool) -> Result<ListeningServer, Box<Error>> {
     let mut server = Nickel::new();
-    server.options = Options::default().thread_count(Some(30));
-    server.keep_alive_timeout(Some(Duration::from_secs(1)));
-
-
-
+    server.options = Options::default().thread_count(Some(config.thread_count));
+    server.keep_alive_timeout(Some(Duration::from_secs(config.thread_keepalive)));
     server.utilize(logger_fn);
 
-    // Only for letsencrypt challenge files
-    server.mount("/", StaticFilesHandler::new("letsencrypt/"));
 
+    if config.https && !https_server {
+        // Only for letsencrypt challenge files
+        server.mount("/", StaticFilesHandler::new("letsencrypt/"));
+        server.utilize(middleware! { |_, res| return res.redirect("https://www.franleplant.com") });
+    }
+
+    server.mount("/public/", StaticFilesHandler::new("public/"));
     server.get("/", middleware! { |_, response|
         let mut data = HashMap::new();
         data.insert("name", "user");
         return response.render("view/index.tpl", &data);
-        //TODO redirect
     });
 
 
 
-    let address: &str = &*format!("{}:{}", config.ip, config.http_port);
 
-
-    match server.listen(address) {
-        Err(error) => println!("Error {}", error),
-
-        Ok(_) => {
-            //TODO
-            //if config.https {
-            //get_cert();
-            println!("starting HTTPS");
-            thread::spawn(start_https_server);
-        },
+    if https_server {
+        let address: &str = &*format!("{}:{}", config.ip, config.https_port);
+        let ssl = Openssl::with_cert_and_key("domain.crt", "domain.pem").unwrap();
+        return server.listen_https(address, ssl)
+    } else {
+        let address: &str = &*format!("{}:{}", config.ip, config.http_port);
+        return server.listen(address)
     }
 }
 
-fn start_https_server() {
-    let config = get_config();
-    let mut server = Nickel::new();
-    server.options = Options::default().thread_count(Some(30));
-    server.keep_alive_timeout(Some(Duration::from_secs(1)));
-
-    server.utilize(logger_fn);
-
-    server.mount("/public/", StaticFilesHandler::new("public/"));
-
-    server.get("/", middleware! { |_, response|
-        let mut data = HashMap::new();
-        data.insert("name", "user");
-        return response.render("view/index.tpl", &data);
-    });
-
-
-
-    let address: &str = &*format!("{}:{}", config.ip, config.https_port);
-
-    let ssl = Openssl::with_cert_and_key("domain.crt", "domain.pem").unwrap();
-    server.listen_https(address, ssl).unwrap();
-}
-
+// TODO
+// - use nickel Router
+// - how to autorenew certificates?
 fn main() {
+    let config = get_config();
 
-    start_http_server();
+    match start_server(&config, false) {
+        Err(error) => println!("Error {}", error),
+
+        Ok(_) => {
+            if config.https {
+                println!("starting HTTPS");
+                get_cert();
+                thread::spawn(move || {
+                    start_server(&config, true).expect("ERROR opening HTTPS server");
+                });
+            }
+        },
+    }
 }
