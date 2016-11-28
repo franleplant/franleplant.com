@@ -6,7 +6,3 @@ authors = ["Fran Guijarro <franleplant@gmail.com>"]
 [dependencies]
 nickel = "*"
 chrono = "0.2"
-
-[lib]
-name = "deps"
-path = "deps.rs"
