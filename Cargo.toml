@@ -4,9 +4,15 @@ version = "0.1.0"
 authors = ["Fran Guijarro <franleplant@gmail.com>"]
 
 [dependencies]
+iron = "*"
+router = "*"
+staticfile = "*"
+mount = "*"
+logger = "*"
+env_logger = "*"
+
+
+
 nickel = "*"
 chrono = "0.2"
 
-[lib]
-name = "deps"
-path = "deps.rs"
