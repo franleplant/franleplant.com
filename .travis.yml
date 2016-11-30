@@ -1,18 +1,16 @@
 sudo: required
 services:
-- docker
+  - docker
 language: rust
 rust:
-- stable
+  - stable
 before_install:
-- openssl aes-256-cbc -K $encrypted_4917fba71c1e_key -iv $encrypted_4917fba71c1e_iv
-  -in franleplant.com.pem.enc -out franleplant.com.pem -d
-- sudo chmod 400 franleplant.com.pem
+  - openssl aes-256-cbc -K $encrypted_4917fba71c1e_key -iv $encrypted_4917fba71c1e_iv -in franleplant.com.pem.enc -out franleplant.com.pem -d
+  - sudo chmod 400 franleplant.com.pem
 after_success:
-- if [ "$TRAVIS_BRANCH" == "$TRAVIS_BRANCH" ]; then
-  docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
-  ./update_image.sh;
-  docker run -d franleplant/blog;
-  docker ps -a;
-  #ssh -o "StrictHostKeyChecking no" -i franleplant.com.pem "$AWS_USER"@"$AWS_HOST" -t "sudo docker stop app; sudo docker rm app; sudo docker pull $DOCKER_BUILD_NAME; sudo docker run -d -p 80:8000 --name app $DOCKER_BUILD_NAME;";
-  fi
+  - if [ "$TRAVIS_BRANCH" == "$TRAVIS_BRANCH" ]; then
+    docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
+    bash update_image.sh;
+    docker run -d franleplant/blog;
+    docker ps -a;
+    fi
