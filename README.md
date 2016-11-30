@@ -15,6 +15,15 @@ docker-compose up --build -d
 
 ```
 
+
+Building franleplant/blog
+```sh
+./dist.sh
+docker build .
+docker push franleplant/blog
+```
+
+
 ## TODO
 - Use HTTPS
 - Blog and more sections

@@ -1,10 +1,9 @@
 version: '2'
 services:
+
   nginx:
-    build:
-      context: .
-      dockerfile: Dockerfile-nginx
     container_name: nginx
+    image: jwilder/nginx-proxy
     ports:
       - "80:80"
     volumes:
@@ -16,7 +15,16 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - VIRTUAL_HOST=whoami.local
+      - VIRTUAL_HOST=www.franleplant.com,franleplant.com
     #volumes:
       #- .:/code
 
+  #letsencrypt:
+    #ports:
+      #- "80:80"
+    #build:
+      #context: .
+      #dockerfile: Dockerfile-letsencrypt
+    #container_name: letsencrypt
+    #volumes:
+      #- /tmp/blog/html:/var/www/html

@@ -9,6 +9,8 @@ use nickel::{Nickel, Options, Mountable, HttpRouter, StaticFilesHandler};
 
 use chrono::{DateTime, UTC};
 
+// TODO env config
+// TODO: better logging
 fn main() {
     let mut server = Nickel::new();
     server.options = Options::default().thread_count(Some(30));
@@ -30,7 +32,7 @@ fn main() {
     server.get("/", middleware! { |_, response|
         let mut data = HashMap::new();
         data.insert("name", "user");
-        return response.render("src/view/index.tpl", &data);
+        return response.render("view/index.tpl", &data);
     });
 
 
