@@ -10,6 +10,12 @@ Requirements: docker, docker-machine, docker-compose
 # Set env variables to point to aws host
 eval $(docker-machine env aws-sandbox)
 
+# pull latests versions of all containers (time expensive)
+docker-compose pull
+
+# pull latests version of the app
+docker-compose pull web
+
 # build and deploy
 docker-compose up --build -d
 
