@@ -18,9 +18,7 @@ docker-compose up --build -d
 
 Building franleplant/blog
 ```sh
-./dist.sh
-docker build .
-docker push franleplant/blog
+./update_image.sh
 ```
 
 
