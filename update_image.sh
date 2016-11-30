@@ -1,3 +1,3 @@
 ./dist.sh
-docker build .
+docker build -t franleplant/blog .
 docker push franleplant/blog
