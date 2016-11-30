@@ -1,24 +1,17 @@
 version: '2'
 services:
 
-  nginx:
-    container_name: nginx
+  nginx-proxy:
+    container_name: nginx-proxy
     image: jwilder/nginx-proxy
     ports:
       - "80:80"
+      - "443:443"
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
       - ~/letsencrypt/certs:/etc/nginx/certs:ro
       - /etc/nginx/vhost.d
       - /usr/share/nginx/html
-
-  web:
-    container_name: app
-    image: franleplant/blog
-    ports:
-      - "8000:8000"
-    environment:
-      - VIRTUAL_HOST=www.franleplant.com,franleplant.com
 
   letsencrypt:
     container_name: letsencrypt
@@ -27,4 +20,19 @@ services:
       - ~/letsencrypt/certs:/etc/nginx/certs:rw
       - /var/run/docker.sock:/var/run/docker.sock:ro
     volumes_from:
-      - nginx
+      - nginx-proxy
+
+  web:
+    container_name: app
+    image: franleplant/blog
+    ports:
+      - "8000:8000"
+    depends_on:
+      - letsencrypt
+      - nginx-proxy
+    environment:
+      - VIRTUAL_HOST=www.franleplant.com,franleplant.com
+      - LETSENCRYPT_HOST=www.franleplant.com,franleplant.com
+      - LETSENCRYPT_EMAIL=franleplant@gmail.com
+      - LETSENCRYPT_TEST=true
+
