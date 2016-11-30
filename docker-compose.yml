@@ -34,5 +34,4 @@ services:
       - VIRTUAL_HOST=www.franleplant.com,franleplant.com
       - LETSENCRYPT_HOST=www.franleplant.com,franleplant.com
       - LETSENCRYPT_EMAIL=franleplant@gmail.com
-      - LETSENCRYPT_TEST=true
 
