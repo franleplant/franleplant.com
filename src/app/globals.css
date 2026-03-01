@@ -22,11 +22,6 @@ body {
   color: var(--color-white);
 }
 
-@media (min-width: 1024px) {
-  body {
-    overflow: hidden;
-  }
-}
 
 /* Decorative glow effects */
 .glow-green {

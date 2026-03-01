@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Playfair_Display, Inter, JetBrains_Mono } from "next/font/google";
+import { brand } from "@/data/brand";
 import "./globals.css";
 
 const playfair = Playfair_Display({
@@ -21,56 +22,37 @@ const jetbrainsMono = JetBrains_Mono({
   display: "swap",
 });
 
+const title = `${brand.name} — AI Builder`;
+const description = `${brand.tagline}. ${brand.name} (${brand.handle}) is an AI builder, software engineer, mentor, and team leader specializing in agentic programming, vibe coding, and AI-native development. Expert in JavaScript, TypeScript, React, and Node.js.`;
+const shortDescription = `${brand.tagline}. Agentic programming, vibe coding, and AI-native development. ${brand.subtitle}`;
+
 export const metadata: Metadata = {
-  metadataBase: new URL("https://franleplant.com"),
-  title: "Fran Leplant — AI Builder",
-  description:
-    "Building the future of software with AI. Fran Leplant is an AI builder, software engineer, mentor, and team leader specializing in agentic programming, vibe coding, and AI-native development. Expert in JavaScript, TypeScript, React, and Node.js.",
-  keywords: [
-    "Fran Leplant",
-    "franleplant",
-    "AI builder",
-    "AI-native developer",
-    "agentic programming",
-    "vibe coding",
-    "ralph wiggum loop",
-    "autonomous coding",
-    "AI-assisted development",
-    "prompt engineering",
-    "software engineer",
-    "JavaScript",
-    "TypeScript",
-    "React",
-    "Node.js",
-    "mentor",
-    "team lead",
-    "LLM engineering",
-    "AI pair programming",
-  ],
-  authors: [{ name: "Fran Leplant" }],
-  creator: "Fran Leplant",
+  metadataBase: new URL(brand.url),
+  title,
+  description,
+  keywords: [...brand.keywords],
+  authors: [{ name: brand.name }],
+  creator: brand.name,
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://franleplant.com",
-    siteName: "Fran Leplant",
-    title: "Fran Leplant — AI Builder",
-    description:
-      "Building the future of software with AI. Agentic programming, vibe coding, and AI-native development. Engineer, mentor & team leader.",
+    url: brand.url,
+    siteName: brand.name,
+    title,
+    description: shortDescription,
     images: [
       {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Fran Leplant — AI Builder",
+        alt: title,
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Fran Leplant — AI Builder",
-    description:
-      "Building the future of software with AI. Agentic programming, vibe coding, and AI-native development. Engineer, mentor & team leader.",
+    title,
+    description: shortDescription,
     images: ["/og-image.png"],
   },
   robots: {
@@ -90,7 +72,7 @@ export default function RootLayout({
       className={`${playfair.variable} ${inter.variable} ${jetbrainsMono.variable}`}
     >
       <head>
-        <link rel="canonical" href="https://franleplant.com" />
+        <link rel="canonical" href={brand.url} />
       </head>
       <body className="font-body antialiased">{children}</body>
     </html>

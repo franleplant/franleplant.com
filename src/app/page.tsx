@@ -2,27 +2,8 @@
 
 import Image from "next/image";
 import { useState } from "react";
-
-function LogoIcon({ className }: { className?: string }) {
-  // Proportions matched from original SVG: nodes at ~43% radius spread, ~28% above/below center
-  return (
-    <svg
-      viewBox="0 0 70 70"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className={className}
-    >
-      <circle cx="35" cy="35" r="35" fill="#33E692" />
-      {/* Edges connecting nodes */}
-      <line x1="35" y1="25" x2="20" y2="45" stroke="white" strokeWidth="2.7" strokeLinecap="round" />
-      <line x1="35" y1="25" x2="50" y2="45" stroke="white" strokeWidth="2.7" strokeLinecap="round" />
-      {/* Nodes — top center, bottom-left, bottom-right */}
-      <circle cx="35" cy="25" r="5.7" fill="white" />
-      <circle cx="20" cy="45" r="5.7" fill="white" />
-      <circle cx="50" cy="45" r="5.7" fill="white" />
-    </svg>
-  );
-}
+import { LogoIcon } from "@/components/LogoIcon";
+import { brand } from "@/data/brand";
 
 function TwitterIcon() {
   return (
@@ -298,15 +279,15 @@ export default function Home() {
 
             {/* Subtitle */}
             <p className="font-mono text-sm md:text-base text-white/60 max-w-md leading-relaxed">
-              Building the future of software with AI.
+              {brand.tagline}.
               <br />
-              Engineer, mentor &amp; team lead.
+              {brand.subtitle}
             </p>
 
             {/* Social links */}
             <div className="flex items-center gap-4 mt-1">
               <a
-                href="https://x.com/franleplant"
+                href={brand.social.x}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-white/70 hover:text-green transition-colors duration-200"
@@ -315,7 +296,7 @@ export default function Home() {
                 <TwitterIcon />
               </a>
               <a
-                href="https://linkedin.com/in/franleplant"
+                href={brand.social.linkedin}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-white/70 hover:text-green transition-colors duration-200"
@@ -324,7 +305,7 @@ export default function Home() {
                 <LinkedInIcon />
               </a>
               <a
-                href="https://github.com/franleplant"
+                href={brand.social.github}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-white/70 hover:text-green transition-colors duration-200"
@@ -357,38 +338,50 @@ export default function Home() {
       {/* Contact Modal */}
       <ContactModal isOpen={contactOpen} onClose={() => setContactOpen(false)} />
 
-      {/* JSON-LD Structured Data */}
+      {/* JSON-LD: Person */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "Person",
-            name: "Fran Leplant",
-            url: "https://franleplant.com",
-            jobTitle: "AI Builder & Software Engineer",
-            description:
-              "Building the future of software with AI. Expert in agentic programming, vibe coding, autonomous coding loops, JavaScript, TypeScript, React, and Node.js.",
-            knowsAbout: [
-              "Artificial Intelligence",
-              "Agentic Programming",
-              "Vibe Coding",
-              "Ralph Wiggum Loop",
-              "Autonomous Coding",
-              "AI-Assisted Development",
-              "LLM Engineering",
-              "Prompt Engineering",
-              "Software Engineering",
-              "JavaScript",
-              "TypeScript",
-              "React",
-              "Node.js",
-            ],
+            name: brand.name,
+            alternateName: brand.handle,
+            url: brand.url,
+            jobTitle: brand.role,
+            description: `${brand.tagline}. ${brand.bio}`,
+            email: brand.email,
+            image: `${brand.url}/og-image.png`,
+            knowsAbout: brand.knowsAbout,
+            hasOccupation: {
+              "@type": "Occupation",
+              name: brand.role,
+              skills: brand.expertise.join(", "),
+            },
             sameAs: [
-              "https://x.com/franleplant",
-              "https://linkedin.com/in/franleplant",
-              "https://github.com/franleplant",
+              brand.social.x,
+              brand.social.linkedin,
+              brand.social.github,
+              brand.social.blog,
             ],
+          }),
+        }}
+      />
+      {/* JSON-LD: WebSite */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            name: brand.name,
+            alternateName: brand.handle,
+            url: brand.url,
+            description: `${brand.tagline}. ${brand.subtitle}`,
+            author: {
+              "@type": "Person",
+              name: brand.name,
+            },
           }),
         }}
       />
