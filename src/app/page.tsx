@@ -55,9 +55,33 @@ function ContactModal({
   isOpen: boolean;
   onClose: () => void;
 }) {
-  const [submitted, setSubmitted] = useState(false);
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
 
   if (!isOpen) return null;
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setStatus("sending");
+
+    const form = e.currentTarget;
+    const data = new FormData(form);
+
+    try {
+      const res = await fetch("https://formsubmit.co/ajax/franleplant@gmail.com", {
+        method: "POST",
+        headers: { Accept: "application/json" },
+        body: data,
+      });
+
+      if (res.ok) {
+        setStatus("sent");
+      } else {
+        setStatus("error");
+      }
+    } catch {
+      setStatus("error");
+    }
+  }
 
   return (
     <div
@@ -83,7 +107,7 @@ function ContactModal({
           </svg>
         </button>
 
-        {submitted ? (
+        {status === "sent" ? (
           <div className="text-center py-8">
             <div className="w-16 h-16 rounded-full bg-green/20 flex items-center justify-center mx-auto mb-4">
               <svg viewBox="0 0 24 24" fill="none" stroke="#33E692" strokeWidth="2.5" className="w-8 h-8">
@@ -102,17 +126,14 @@ function ContactModal({
               I&apos;ll get back to you as soon as possible.
             </p>
 
-            <form
-              action="https://formsubmit.co/franleplant@gmail.com"
-              method="POST"
-              onSubmit={() => {
-                setSubmitted(true);
-              }}
-              target="hidden_iframe"
-            >
-              {/* FormSubmit config */}
+            {status === "error" && (
+              <div className="mb-4 px-4 py-2.5 bg-pink/10 border border-pink/20 rounded-lg text-pink text-xs font-mono">
+                Something went wrong. Please try again or email me directly at franleplant@gmail.com
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit}>
               <input type="hidden" name="_subject" value="New contact from franleplant.com" />
-              <input type="hidden" name="_captcha" value="false" />
               <input type="hidden" name="_template" value="table" />
               <input type="text" name="_honey" style={{ display: "none" }} tabIndex={-1} />
 
@@ -158,18 +179,16 @@ function ContactModal({
                 </div>
                 <button
                   type="submit"
-                  className="w-full px-6 py-2.5 bg-green text-bg font-mono text-sm font-bold rounded-lg hover:bg-green/90 transition-colors"
+                  disabled={status === "sending"}
+                  className="w-full px-6 py-2.5 bg-green text-bg font-mono text-sm font-bold rounded-lg hover:bg-green/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  SEND MESSAGE
+                  {status === "sending" ? "SENDING..." : "SEND MESSAGE"}
                 </button>
               </div>
             </form>
           </>
         )}
       </div>
-
-      {/* Hidden iframe for form submission without redirect */}
-      <iframe name="hidden_iframe" style={{ display: "none" }} />
     </div>
   );
 }
