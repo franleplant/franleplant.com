@@ -67,7 +67,7 @@ function ContactModal({
     const data = new FormData(form);
 
     try {
-      const res = await fetch("https://formsubmit.co/ajax/franleplant@gmail.com", {
+      const res = await fetch("https://formsubmit.co/ajax/194092194eb2c42f0d5890e937937cb4", {
         method: "POST",
         headers: { Accept: "application/json" },
         body: data,
