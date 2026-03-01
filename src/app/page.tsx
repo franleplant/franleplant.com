@@ -351,7 +351,7 @@ export default function Home() {
           <LogoIcon className="w-[18px] h-[18px] opacity-50" />
           <span>franleplant</span>
         </div>
-        <span>&copy; {new Date().getFullYear()} Fran Leplant</span>
+        <span>&copy; 2026 franleplant</span>
       </div>
 
       {/* Contact Modal */}
