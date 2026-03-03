@@ -1,8 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useRef, useCallback } from "react";
 import { LogoIcon } from "@/components/LogoIcon";
+import { RocketGame } from "@/components/RocketGame";
 import { brand } from "@/data/brand";
 
 function TwitterIcon() {
@@ -176,6 +177,22 @@ function ContactModal({
 
 export default function Home() {
   const [contactOpen, setContactOpen] = useState(false);
+  const [asteroidsMode, setAsteroidsMode] = useState(false);
+  const [rocketStartPos, setRocketStartPos] = useState({ x: 0, y: 0 });
+  const rocketCircleRef = useRef<HTMLDivElement>(null);
+
+  const handleRocketClick = useCallback(() => {
+    if (rocketCircleRef.current) {
+      const rect = rocketCircleRef.current.getBoundingClientRect();
+      setRocketStartPos({
+        x: rect.left + rect.width / 2,
+        y: rect.top + rect.height / 2,
+      });
+    }
+    setAsteroidsMode(true);
+  }, []);
+
+  const exitAsteroids = useCallback(() => setAsteroidsMode(false), []);
 
   return (
     <main className="relative w-full min-h-screen lg:h-screen lg:overflow-hidden bg-bg flex flex-col">
@@ -242,17 +259,23 @@ export default function Home() {
               />
               {/* Inner content area */}
               <div
-                className="absolute inset-3 rounded-full overflow-hidden flex items-center justify-center"
+                ref={rocketCircleRef}
+                className="absolute inset-3 rounded-full overflow-hidden flex items-center justify-center cursor-pointer"
                 style={{
                   background: "radial-gradient(circle at 30% 40%, #3a1f5e 0%, #2a1245 40%, #1a0a30 100%)",
                 }}
+                onClick={handleRocketClick}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") handleRocketClick(); }}
+                aria-label="Launch asteroids mode"
               >
                 <Image
                   src="/rocket.png"
                   alt="Rocket illustration representing building and launching software"
                   width={400}
                   height={400}
-                  className="w-full h-full object-contain drop-shadow-2xl animate-rocket-bob"
+                  className={`w-full h-full object-contain drop-shadow-2xl animate-rocket-bob transition-opacity duration-300 ${asteroidsMode ? "opacity-30" : ""}`}
                   priority
                 />
               </div>
@@ -337,6 +360,15 @@ export default function Home() {
 
       {/* Contact Modal */}
       <ContactModal isOpen={contactOpen} onClose={() => setContactOpen(false)} />
+
+      {/* Asteroids Easter Egg */}
+      {asteroidsMode && (
+        <RocketGame
+          onExit={exitAsteroids}
+          startX={rocketStartPos.x}
+          startY={rocketStartPos.y}
+        />
+      )}
 
       {/* JSON-LD: Person */}
       <script
